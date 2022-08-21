@@ -1,4 +1,4 @@
-FROM node:12.6.0-buster as base
+FROM node:15 as base
 
 # Load the application code
 RUN mkdir -p /app
@@ -7,11 +7,6 @@ ADD . /app
 
 # Install dependencies
 RUN yarn install
-
-FROM base as build
-RUN yarn build
-
-FROM build as release
 
 # Start 'er up
 CMD ["yarn", "start"]
