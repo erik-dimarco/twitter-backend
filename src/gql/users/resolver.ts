@@ -1,22 +1,13 @@
 import { IContext } from 'gql/context';
-import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql';
-import { CreateUserInput, User } from './schema';
+import { authentication } from 'middleware';
+import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql';
+import { User } from './schema';
 
 @Resolver(() => User)
 export class UsersResolver {
-	@Query(() => User)
-	user(): User {
-		return { id: '1', firstName: 'John', lastName: 'Doe', email: 'test@gmail.com' };
-	}
-
-	@Mutation(() => User)
-	async createUser(@Arg('input') { firstName, lastName, email }: CreateUserInput, @Ctx() { prisma, identity }: IContext): Promise<User> {
-		return await prisma.user.create({
-			data: {
-				firstName,
-				lastName,
-				email
-			}
-		});
+	@UseMiddleware(authentication)
+	@Query(() => User, { nullable: true })
+	async me(@Ctx() { identity, db }: IContext): Promise<User> {
+		return (await db.users.findFirst({ where: { id: identity.id } })) as User;
 	}
 }

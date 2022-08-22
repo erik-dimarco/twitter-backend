@@ -17,6 +17,6 @@
 		"baseUrl": "src/",
 		"noUnusedLocals": true
 	},
-	"include": ["src/**/*.ts", "db/**/*.ts", "server.ts", "scripts/**/*.ts"],
+	"include": ["src/**/*.ts", "db/**/*.ts", "server.ts", "scripts/**/*.ts", "src/types/userRole"],
 	"exclude": ["node_modules", "lib"]
 }

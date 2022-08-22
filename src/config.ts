@@ -7,12 +7,16 @@ function int(str: string | undefined, radix?: number) {
 }
 
 export default {
+	crypto: {
+		aesSecretKey: process.env.AES_SECRET_KEY
+	},
 	server: {
 		port: int(process.env.APP_PORT) || 4000,
 		path: '/graphql'
 	},
 	jwt: {
 		userExpiresIn: int(process.env.JWT_USER_EXPIRES_IN) || 604800, // 1 week
+		adminExpiresIn: int(process.env.JWT_ADMIN_EXPIRES_IN) || 3600, // 1 hour
 		secret: process.env.JWT_SECRET || 'twitter-secret'
 	},
 	aws: {

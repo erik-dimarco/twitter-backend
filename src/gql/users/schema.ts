@@ -1,6 +1,7 @@
 import { TimeStamps } from 'types/util';
 import { Field, ID, InputType, ObjectType } from 'type-graphql';
 import 'reflect-metadata';
+import { UserRole } from 'types/userRole';
 
 @ObjectType()
 export class User extends TimeStamps {
@@ -15,16 +16,19 @@ export class User extends TimeStamps {
 
 	@Field()
 	email: string;
+
+	@Field()
+	hashedPassword: string;
+
+	@Field(() => String)
+	role: UserRole;
+
+	@Field()
+	lastLogin: Date;
 }
 
-@InputType()
-export class CreateUserInput {
+@ObjectType()
+export class OperationSuccess {
 	@Field()
-	firstName: string;
-
-	@Field()
-	lastName: string;
-
-	@Field()
-	email: string;
+	success: boolean;
 }

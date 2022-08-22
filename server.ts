@@ -11,7 +11,6 @@ import graphQLErrorHandler from 'lib/graphQLErrorHandler';
 import log from 'lib/logger';
 
 const main = async () => {
-	// expressAsyncErrors;
 	let schema;
 	try {
 		schema = await createSchema();
@@ -23,22 +22,12 @@ const main = async () => {
 	const server = new ApolloServer({
 		context,
 		schema,
-		// playground: {
-		// 	settings: {
-		// 		'editor.theme': 'dark',
-		// 		'editor.cursorShape': 'line'
-		// 	}
-		// },
 		formatError: graphQLErrorHandler
 	});
 
 	const app = express();
 
 	const { port, path } = config.server;
-
-	// app.set('etag', false);
-	// app.use(express.json());
-	// app.use(express.urlencoded({ extended: false }));
 
 	await server.start();
 	server.applyMiddleware({ app, path });
