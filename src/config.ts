@@ -11,7 +11,7 @@ export default {
 		aesSecretKey: process.env.AES_SECRET_KEY
 	},
 	server: {
-		port: int(process.env.APP_PORT) || 4000,
+		port: int(process.env.APP_PORT) || 4001,
 		path: '/graphql'
 	},
 	jwt: {

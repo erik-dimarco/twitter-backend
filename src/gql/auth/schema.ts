@@ -62,6 +62,15 @@ export class RegisterInput implements Partial<User> {
 	password: string;
 }
 
+@ObjectType()
+export class RegisterResponse {
+	@Field()
+	token: string;
+
+	@Field(() => User)
+	user: User;
+}
+
 // @InputType()
 // export class RegisterAdminInput implements Partial<User> {
 // 	@Field()

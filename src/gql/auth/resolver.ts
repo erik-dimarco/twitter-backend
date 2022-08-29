@@ -7,7 +7,7 @@ import { User } from 'gql/users/schema';
 import { decrypt } from 'lib/crypto';
 import { InvalidRegistrationFormData, InvalidTokenError, LoginError, ReuseOldPassword } from 'lib/errors';
 import { decode, encode } from 'lib/tokens';
-import { LoginInput, LoginResponse, RegisterInput, ResetPasswordResponse } from './schema';
+import { LoginInput, LoginResponse, RegisterInput, RegisterResponse, ResetPasswordResponse } from './schema';
 
 export function createSessionToken(user: User): string {
 	return encode(user, user.role === 'user' ? config.jwt.userExpiresIn : config.jwt.adminExpiresIn);
@@ -39,7 +39,7 @@ export class UsersAuthResolver {
 		@Arg('input')
 		{ firstName, lastName, email, password }: RegisterInput,
 		@Ctx() { db }: IContext
-	): Promise<User> {
+	): Promise<RegisterResponse> {
 		const validationErrors: Record<string, string> = {};
 
 		email = email.toLowerCase();
@@ -61,9 +61,12 @@ export class UsersAuthResolver {
 			role: 'user'
 		};
 		const insertedUser = await db.users.create({ data: user });
+		const sessionToken = createSessionToken(insertedUser);
 
-		// await this._queueRegistrationReminder(insertedUser);
-		return insertedUser;
+		return {
+			token: sessionToken,
+			user: insertedUser
+		};
 	}
 
 	// @Mutation(() => LoginResponse)
