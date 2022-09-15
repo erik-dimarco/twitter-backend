@@ -1,8 +1,6 @@
-import { IsOptional, IsPhoneNumber } from 'class-validator';
 import { Field, InputType, ObjectType } from 'type-graphql';
 
 import { User } from 'gql/users/schema';
-import { UserRole } from 'types/userRole';
 
 @ObjectType()
 export class LoginResponse {

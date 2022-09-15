@@ -12,6 +12,11 @@ enum Role {
   admin
 }
 
+enum TweetType {
+	tweet
+	retweet
+}
+
 model users {
     id            		String    @id @default(cuid())
     firstName    			String
@@ -22,5 +27,59 @@ model users {
 		lastLogin					DateTime 	@default(now())
     createdAt     		DateTime  @default(now())
     updatedAt     		DateTime  @updatedAt
+		profileImage      String?
+		username      		String?
+		followed 					follows[] @relation("followed")
+  	follower					follows[] @relation("follower")
+		tweets						tweets[]
+		likes							likes[]
+		comments					comments[]
 }
 
+model follows {
+    id            		String    @id @default(cuid())
+    follower    			users 		@relation("follower", fields: [followerId], references: [id])
+		followerId  			String
+		followed  				users 		@relation("followed", fields: [followedId], references: [id])
+		followedId 				String
+    createdAt     		DateTime  @default(now())
+    updatedAt     		DateTime  @updatedAt
+}
+
+model tweets {
+    id            		String    @id @default(cuid())
+		userId       			String
+    caption    				String		@db.VarChar(280)
+		imageUrl					String?
+		type							TweetType	@default(tweet)
+    createdAt     		DateTime  @default(now())
+    updatedAt     		DateTime  @updatedAt
+		user							users			@relation(fields: [userId], references: [id], onDelete: Cascade)
+		likes							likes[]
+		// retweets					tweets[]	@relation("retweets")
+		comments					comments[]
+}
+
+model likes {
+		id            		String    @id @default(cuid())
+		userId       			String
+		tweetId      			String
+		commentId					String?
+		createdAt     		DateTime  @default(now())
+		updatedAt     		DateTime  @updatedAt
+		user							users			@relation(fields: [userId], references: [id], onDelete: Cascade)
+		tweet							tweets		@relation(fields: [tweetId], references: [id], onDelete: Cascade)
+		comment						comments?	@relation(fields: [commentId], references: [id], onDelete: Cascade)
+}
+
+model comments {
+		id            		String    @id @default(cuid())
+		userId       			String
+		tweetId      			String
+		text							String		@db.VarChar(280)
+		createdAt     		DateTime  @default(now())
+		updatedAt     		DateTime  @updatedAt
+		user							users			@relation(fields: [userId], references: [id], onDelete: Cascade)
+		tweet							tweets		@relation(fields: [tweetId], references: [id], onDelete: Cascade)
+		likes							likes[]
+}

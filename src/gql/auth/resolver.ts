@@ -34,7 +34,7 @@ export class UsersAuthResolver {
 		};
 	}
 
-	@Mutation(() => User)
+	@Mutation(() => RegisterResponse)
 	async register(
 		@Arg('input')
 		{ firstName, lastName, email, password }: RegisterInput,
@@ -53,12 +53,13 @@ export class UsersAuthResolver {
 		}
 
 		const hashedPassword = await bcrypt.hash(password, 12);
-		const user: Pick<User, 'firstName' | 'lastName' | 'email' | 'hashedPassword' | 'role'> = {
+		const user: Pick<User, 'firstName' | 'lastName' | 'email' | 'hashedPassword' | 'role' | 'lastLogin'> = {
 			firstName,
 			lastName,
 			email,
 			hashedPassword,
-			role: 'user'
+			role: 'user',
+			lastLogin: new Date()
 		};
 		const insertedUser = await db.users.create({ data: user });
 		const sessionToken = createSessionToken(insertedUser);
@@ -337,28 +338,12 @@ export class UsersAuthResolver {
 		// 	throw RequireResetPasswordError;
 		// }
 
-		//Set the last login time to now
-		// return await db.users.update({
-		// 	where: {
-		// 		id: userRecord.id
-		// 	},
-		// 	data: { lastLogin: new Date() }
-		// });
-
+		// Set the last login time to now
 		return await db.users.update({
 			where: {
-				id: userRecord?.id
+				id: userRecord.id
 			},
-			data: { role: 'user' },
-			select: {
-				id: true,
-				firstName: true,
-				lastName: true,
-				email: true,
-				role: true,
-				hashedPassword: true,
-				lastLogin: true
-			}
+			data: { lastLogin: new Date() }
 		});
 	}
 }
